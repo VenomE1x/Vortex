@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vortex — AI Video Agency</title>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CDN with custom config -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -504,16 +502,14 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: #0d0d0d; }
     ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
-    ::selection { background: rgba(201,168,76,0.25); color: #f0ece4; }
+    ::-selection { background: rgba(201,168,76,0.25); color: #f0ece4; }
   </style>
 </head>
 <body>
 
-  <!-- Custom Cursor -->
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
-  <!-- ─── Navigation ─── -->
   <nav id="navbar">
     <a href="#" class="nav-logo">Vortex</a>
     <div class="nav-links hidden md:flex">
@@ -522,12 +518,11 @@
       <a href="#process">Process</a>
       <a href="#contact">Contact</a>
     </div>
-    <a href="#contact" class="hidden md:inline-block text-xs tracking-widest uppercase border border-gold text-gold px-5 py-2 hover:bg-gold hover:text-matte transition-all duration-300" style="font-size:0.6rem; letter-spacing:0.3em;">
+    <a href="https://wa.me/201025377219" target="_blank" class="hidden md:inline-block text-xs tracking-widest uppercase border border-gold text-gold px-5 py-2 hover:bg-gold hover:text-matte transition-all duration-300" style="font-size:0.6rem; letter-spacing:0.3em;">
       Begin Project
     </a>
   </nav>
 
-  <!-- ─── Hero ─── -->
   <section class="hero">
     <video autoplay loop muted playsinline class="object-cover">
       <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
@@ -549,10 +544,8 @@
     </div>
   </section>
 
-  <!-- ─── Marquee Strip ─── -->
   <div class="overflow-hidden py-5 border-y border-gold border-opacity-10">
     <div class="marquee-track">
-      <!-- duplicated for infinite illusion -->
       <span class="marquee-item">AI Concept Art <span class="marquee-dot"></span></span>
       <span class="marquee-item">Cinematic Motion <span class="marquee-dot"></span></span>
       <span class="marquee-item">Sound Design <span class="marquee-dot"></span></span>
@@ -566,7 +559,6 @@
     </div>
   </div>
 
-  <!-- ─── Stats Strip ─── -->
   <section class="py-20 px-8 md:px-24">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center fade-up">
       <div>
@@ -589,7 +581,6 @@
     <hr class="hr-gold mt-20 opacity-30" />
   </section>
 
-  <!-- ─── Manifesto ─── -->
   <section class="py-24 px-8 md:px-24 max-w-6xl mx-auto">
     <div class="grid md:grid-cols-2 gap-16 items-center">
       <div class="fade-up">
@@ -606,7 +597,6 @@
     </div>
   </section>
 
-  <!-- ─── Portfolio ─── -->
   <section id="work" class="pb-32">
     <div class="px-8 md:px-24 mb-16 fade-up">
       <p class="section-label">Selected Work</p>
@@ -620,7 +610,6 @@
     </div>
 
     <div class="portfolio-grid">
-      <!-- Item 1 -->
       <div class="portfolio-item fade-up">
         <video autoplay loop muted playsinline class="object-cover">
           <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
@@ -633,7 +622,6 @@
         <span class="portfolio-item-num">01 / 03</span>
       </div>
 
-      <!-- Item 2 -->
       <div class="portfolio-item fade-up fade-up-delay-2">
         <video autoplay loop muted playsinline class="object-cover">
           <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
@@ -646,7 +634,6 @@
         <span class="portfolio-item-num">02 / 03</span>
       </div>
 
-      <!-- Item 3 -->
       <div class="portfolio-item fade-up fade-up-delay-3">
         <video autoplay loop muted playsinline class="object-cover">
           <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
@@ -661,7 +648,6 @@
     </div>
   </section>
 
-  <!-- ─── Services ─── -->
   <section id="services" class="py-32 px-8 md:px-24">
     <div class="mb-16 fade-up">
       <p class="section-label">What We Do</p>
@@ -669,10 +655,8 @@
     </div>
 
     <div class="services-grid">
-      <!-- Service 1 -->
       <div class="service-card fade-up">
         <div class="service-number">01</div>
-        <!-- Icon: Sparkle/Art -->
         <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
           <path d="M18 3 L19.5 14 L30 15.5 L19.5 17 L18 28 L16.5 17 L6 15.5 L16.5 14 Z"/>
           <circle cx="28" cy="8" r="2" stroke-width="0.8"/>
@@ -689,10 +673,8 @@
         </a>
       </div>
 
-      <!-- Service 2 -->
       <div class="service-card fade-up fade-up-delay-2">
         <div class="service-number">02</div>
-        <!-- Icon: Film frame -->
         <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
           <rect x="3" y="7" width="30" height="22" rx="1"/>
           <line x1="3" y1="13" x2="33" y2="13"/>
@@ -714,10 +696,8 @@
         </a>
       </div>
 
-      <!-- Service 3 -->
       <div class="service-card fade-up fade-up-delay-3">
         <div class="service-number">03</div>
-        <!-- Icon: Sound wave -->
         <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
           <line x1="4" y1="18" x2="6" y2="18"/>
           <path d="M6 12 Q9 18 12 18 Q15 18 18 10 Q21 2 24 18 Q27 30 30 18"/>
@@ -736,7 +716,6 @@
     </div>
   </section>
 
-  <!-- ─── Process ─── -->
   <section id="process" class="py-32 px-8 md:px-24 max-w-5xl mx-auto">
     <div class="mb-16 fade-up">
       <p class="section-label">How We Work</p>
@@ -788,7 +767,6 @@
     </div>
   </section>
 
-  <!-- ─── CTA ─── -->
   <section id="contact" class="cta-section py-40 px-8 text-center">
     <div style="position:absolute;left:20%;top:0;height:100%;" class="cta-line-deco"></div>
     <div style="position:absolute;right:20%;top:0;height:100%;" class="cta-line-deco"></div>
@@ -802,7 +780,7 @@
       receives our full creative attention.
     </p>
     <div class="fade-up fade-up-delay-3 flex items-center justify-center gap-6 flex-wrap">
-      <a href="mailto:hello@vortex.studio" class="hero-cta" style="display:inline-block;">
+      <a href="https://wa.me/201025377219" target="_blank" class="hero-cta" style="display:inline-block;">
         Begin Your Project
       </a>
       <a href="#work" style="font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:#888; text-decoration:none; transition:color 0.3s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">
@@ -811,17 +789,10 @@
     </div>
 
     <div class="fade-up fade-up-delay-4 mt-24 flex items-center justify-center gap-8 flex-wrap">
-      <a href="#" class="footer-link">Instagram</a>
-      <span style="color:rgba(201,168,76,0.2)">·</span>
-      <a href="#" class="footer-link">Behance</a>
-      <span style="color:rgba(201,168,76,0.2)">·</span>
-      <a href="#" class="footer-link">Vimeo</a>
-      <span style="color:rgba(201,168,76,0.2)">·</span>
       <a href="#" class="footer-link">LinkedIn</a>
     </div>
   </section>
 
-  <!-- ─── Footer ─── -->
   <footer class="py-12 px-8 md:px-24">
     <div class="flex items-center justify-between flex-wrap gap-6">
       <span class="footer-logo">Vortex</span>
@@ -835,7 +806,6 @@
     </div>
   </footer>
 
-  <!-- ─── JavaScript ─── -->
   <script>
     /* ── Custom cursor ── */
     const cursor = document.getElementById('cursor');
@@ -889,7 +859,9 @@
     /* ── Smooth anchor scroll ── */
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
-        const target = document.querySelector(a.getAttribute('href'));
+        const href = a.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
