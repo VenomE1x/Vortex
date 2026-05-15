@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vortex — AI Video Agency</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN with custom config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: '#C9A84C',
+            'gold-light': '#e2c97e',
+            'gold-dark': '#a07c2e',
+            charcoal: '#1a1a1a',
+            matte: '#0d0d0d',
+            silver: '#b0b0b0',
+            'silver-light': '#d4d4d4',
+          },
+          fontFamily: {
+            cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            montserrat: ['Montserrat', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest2: '0.25em',
+            widest3: '0.4em',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ─── Base resets ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #0d0d0d; }
+    body {
+      background-color: #0d0d0d;
+      color: #d4d4d4;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── Custom cursor ─── */
+    #cursor {
+      width: 10px; height: 10px;
+      background: #C9A84C;
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, width 0.25s ease, height 0.25s ease, background 0.25s ease;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(201,168,76,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.35s cubic-bezier(.23,1,.32,1), width 0.35s, height 0.35s;
+    }
+    body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 18px; height: 18px; }
+    body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: rgba(201,168,76,0.8); }
+
+    /* ─── Gold gradient text util ─── */
+    .gold-text {
+      background: linear-gradient(135deg, #C9A84C 0%, #e2c97e 40%, #C9A84C 60%, #a07c2e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── Noise texture overlay ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ─── Horizontal rule gold ─── */
+    .hr-gold {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #C9A84C 30%, #e2c97e 50%, #C9A84C 70%, transparent);
+      border: none;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(13,13,13,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: #C9A84C;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-links a {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #b0b0b0;
+      text-decoration: none;
+      margin-left: 2.5rem;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0; right: 0; height: 1px;
+      background: #C9A84C;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+    }
+    .nav-links a:hover { color: #C9A84C; }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      width: 100%; height: 100vh;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(13,13,13,0.3) 0%,
+        rgba(13,13,13,0.55) 40%,
+        rgba(13,13,13,0.8) 80%,
+        rgba(13,13,13,1) 100%
+      );
+    }
+    .hero-content {
+      position: relative; z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      margin-bottom: 2rem;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: #f0ece4;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: transparent;
+      background: linear-gradient(135deg, #C9A84C, #e2c97e 50%, #C9A84C);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #b0b0b0;
+      margin-bottom: 3.5rem;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 1rem 3rem;
+      border: 1px solid #C9A84C;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.4s ease;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: #C9A84C;
+      transform: translateX(-101%);
+      transition: transform 0.4s cubic-bezier(.23,1,.32,1);
+      z-index: -1;
+    }
+    .hero-cta:hover { color: #0d0d0d; }
+    .hero-cta:hover::before { transform: translateX(0); }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .scroll-indicator span {
+      font-size: 0.55rem; letter-spacing: 0.35em; color: #C9A84C; text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, #C9A84C, transparent);
+      animation: scroll-pulse 2s ease-in-out infinite;
+    }
+    @keyframes scroll-pulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ─── Section base ─── */
+    section { position: relative; }
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: #f0ece4;
+      letter-spacing: 0.02em;
+    }
+    .section-title em { font-style: italic; }
+
+    /* ─── Portfolio grid ─── */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; } }
+
+    .portfolio-item {
+      position: relative;
+      aspect-ratio: 9/16;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .portfolio-item video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.23,1,.32,1);
+    }
+    .portfolio-item:hover video { transform: scale(1.05); }
+    .portfolio-item-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,13,13,0.85) 0%, transparent 55%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 2rem 1.5rem;
+    }
+    .portfolio-item-border {
+      position: absolute; inset: 0;
+      border: 1px solid transparent;
+      transition: border-color 0.4s ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .portfolio-item:hover .portfolio-item-border { border-color: #C9A84C; }
+    .portfolio-item-tag {
+      font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: #C9A84C; margin-bottom: 0.5rem;
+    }
+    .portfolio-item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 300;
+      color: #f0ece4; line-height: 1.2;
+    }
+    .portfolio-item-num {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      color: rgba(201,168,76,0.6);
+      font-family: 'Montserrat', sans-serif;
+    }
+    /* Gold shimmer on hover */
+    .portfolio-item::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.06) 100%);
+      opacity: 0; transition: opacity 0.4s ease;
+      z-index: 2;
+    }
+    .portfolio-item:hover::after { opacity: 1; }
+
+    /* ─── Services ─── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+    }
+    @media (max-width: 800px) { .services-grid { grid-template-columns: 1fr; } }
+
+    .service-card {
+      padding: 3.5rem 2.5rem;
+      border: 1px solid rgba(201,168,76,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s ease;
+      background: rgba(255,255,255,0.015);
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+      transform: scaleX(0);
+      transition: transform 0.5s ease;
+    }
+    .service-card:hover { border-color: rgba(201,168,76,0.3); }
+    .service-card:hover::before { transform: scaleX(1); }
+
+    .service-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem; font-weight: 300;
+      color: rgba(201,168,76,0.12);
+      line-height: 1; margin-bottom: 1.5rem;
+    }
+    .service-icon {
+      width: 36px; height: 36px; margin-bottom: 1.8rem;
+      color: #C9A84C;
+    }
+    .service-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 300;
+      color: #f0ece4; margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .service-desc {
+      font-size: 0.68rem; line-height: 1.9;
+      color: #888; letter-spacing: 0.05em;
+    }
+    .service-link {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      margin-top: 2rem;
+      font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: #C9A84C; text-decoration: none;
+      transition: gap 0.3s ease;
+    }
+    .service-link:hover { gap: 1.25rem; }
+    .service-link-line {
+      width: 24px; height: 1px; background: #C9A84C;
+      transition: width 0.3s ease;
+    }
+    .service-link:hover .service-link-line { width: 40px; }
+
+    /* ─── Stats strip ─── */
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: #888;
+    }
+
+    /* ─── Manifesto ─── */
+    .manifesto-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.5;
+      color: #c8c4bc;
+      letter-spacing: 0.02em;
+    }
+    .manifesto-text strong {
+      color: #f0ece4;
+      font-weight: 400;
+    }
+
+    /* ─── Process ─── */
+    .process-step {
+      display: flex; gap: 3rem; align-items: flex-start;
+      padding: 3rem 0;
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+    .process-step:first-child { border-top: 1px solid rgba(201,168,76,0.08); }
+    .process-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; font-weight: 300;
+      color: rgba(201,168,76,0.2); line-height: 1; flex-shrink: 0; width: 80px;
+    }
+    .process-body { flex: 1; }
+    .process-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 300;
+      color: #f0ece4; margin-bottom: 0.75rem;
+    }
+    .process-desc { font-size: 0.68rem; line-height: 1.9; color: #888; }
+
+    /* ─── CTA section ─── */
+    .cta-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%);
+    }
+    .cta-line-deco {
+      position: absolute;
+      width: 1px; background: linear-gradient(to bottom, transparent, #C9A84C 50%, transparent);
+      opacity: 0.4;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid rgba(201,168,76,0.12);
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300;
+      letter-spacing: 0.3em;
+      color: #C9A84C;
+      text-transform: uppercase;
+    }
+    .footer-link {
+      font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: #666; text-decoration: none; transition: color 0.3s ease;
+    }
+    .footer-link:hover { color: #C9A84C; }
+
+    /* ─── Fade-up animation ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(.23,1,.32,1), transform 0.9s cubic-bezier(.23,1,.32,1);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up-delay-1 { transition-delay: 0.1s; }
+    .fade-up-delay-2 { transition-delay: 0.22s; }
+    .fade-up-delay-3 { transition-delay: 0.34s; }
+    .fade-up-delay-4 { transition-delay: 0.46s; }
+
+    /* ─── Marquee ─── */
+    .marquee-track {
+      display: flex; gap: 4rem;
+      animation: marquee 20s linear infinite;
+      width: max-content;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 300;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(201,168,76,0.35); white-space: nowrap;
+      display: flex; align-items: center; gap: 4rem;
+    }
+    .marquee-dot { width: 4px; height: 4px; background: rgba(201,168,76,0.35); border-radius: 50%; }
+
+    /* ─── Misc utils ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0d0d0d; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+    ::selection { background: rgba(201,168,76,0.25); color: #f0ece4; }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ─── Navigation ─── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Vortex</a>
+    <div class="nav-links hidden md:flex">
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="hidden md:inline-block text-xs tracking-widest uppercase border border-gold text-gold px-5 py-2 hover:bg-gold hover:text-matte transition-all duration-300" style="font-size:0.6rem; letter-spacing:0.3em;">
+      Begin Project
+    </a>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <video autoplay loop muted playsinline class="object-cover">
+      <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">AI Video Agency — Est. MMXXIV</p>
+      <h1 class="hero-title">
+        Transforming<br /><em>Stillness</em><br />into Cinema
+      </h1>
+      <p class="hero-sub">Where artificial intelligence meets artistry</p>
+      <a href="#work" class="hero-cta">View Our Work</a>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── Marquee Strip ─── -->
+  <div class="overflow-hidden py-5 border-y border-gold border-opacity-10">
+    <div class="marquee-track">
+      <!-- duplicated for infinite illusion -->
+      <span class="marquee-item">AI Concept Art <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Cinematic Motion <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Sound Design <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Visual Storytelling <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Brand Cinema <span class="marquee-dot"></span></span>
+      <span class="marquee-item">AI Concept Art <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Cinematic Motion <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Sound Design <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Visual Storytelling <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Brand Cinema <span class="marquee-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ─── Stats Strip ─── -->
+  <section class="py-20 px-8 md:px-24">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center fade-up">
+      <div>
+        <div class="stat-value gold-text">120+</div>
+        <div class="stat-label mt-2">Projects Delivered</div>
+      </div>
+      <div>
+        <div class="stat-value gold-text">48</div>
+        <div class="stat-label mt-2">Global Brands</div>
+      </div>
+      <div>
+        <div class="stat-value gold-text">3.2B</div>
+        <div class="stat-label mt-2">Views Generated</div>
+      </div>
+      <div>
+        <div class="stat-value gold-text">12</div>
+        <div class="stat-label mt-2">Industry Awards</div>
+      </div>
+    </div>
+    <hr class="hr-gold mt-20 opacity-30" />
+  </section>
+
+  <!-- ─── Manifesto ─── -->
+  <section class="py-24 px-8 md:px-24 max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="fade-up">
+        <p class="section-label">Our Philosophy</p>
+        <h2 class="section-title">The <em>art</em> of the<br />invisible machine</h2>
+      </div>
+      <div class="fade-up fade-up-delay-2">
+        <p class="manifesto-text">
+          We believe technology should <strong>disappear</strong> — leaving only the emotion, the
+          story, the shiver down the spine. Vortex fuses the precision of AI with the
+          soul of a cinematographer to craft visuals that <strong>move people</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Portfolio ─── -->
+  <section id="work" class="pb-32">
+    <div class="px-8 md:px-24 mb-16 fade-up">
+      <p class="section-label">Selected Work</p>
+      <div class="flex items-end justify-between flex-wrap gap-4">
+        <h2 class="section-title">Recent <em>Commissions</em></h2>
+        <a href="#contact" class="service-link text-gold">
+          <span class="service-link-line"></span>
+          View all projects
+        </a>
+      </div>
+    </div>
+
+    <div class="portfolio-grid">
+      <!-- Item 1 -->
+      <div class="portfolio-item fade-up">
+        <video autoplay loop muted playsinline class="object-cover">
+          <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
+        </video>
+        <div class="portfolio-item-border"></div>
+        <div class="portfolio-item-overlay">
+          <p class="portfolio-item-tag">AI Concept Art</p>
+          <p class="portfolio-item-name">Noir Luxury Brand Film</p>
+        </div>
+        <span class="portfolio-item-num">01 / 03</span>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="portfolio-item fade-up fade-up-delay-2">
+        <video autoplay loop muted playsinline class="object-cover">
+          <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
+        </video>
+        <div class="portfolio-item-border"></div>
+        <div class="portfolio-item-overlay">
+          <p class="portfolio-item-tag">Cinematic Motion</p>
+          <p class="portfolio-item-name">Editorial Motion Sequence</p>
+        </div>
+        <span class="portfolio-item-num">02 / 03</span>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="portfolio-item fade-up fade-up-delay-3">
+        <video autoplay loop muted playsinline class="object-cover">
+          <source src="https://pub-e7deff275a724f9d83821e37d8cd0f3f.r2.dev/Client-videos/NOIRBrand.mp4" type="video/mp4" />
+        </video>
+        <div class="portfolio-item-border"></div>
+        <div class="portfolio-item-overlay">
+          <p class="portfolio-item-tag">Sound Design</p>
+          <p class="portfolio-item-name">Immersive Product Launch</p>
+        </div>
+        <span class="portfolio-item-num">03 / 03</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Services ─── -->
+  <section id="services" class="py-32 px-8 md:px-24">
+    <div class="mb-16 fade-up">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">Crafted <em>Disciplines</em></h2>
+    </div>
+
+    <div class="services-grid">
+      <!-- Service 1 -->
+      <div class="service-card fade-up">
+        <div class="service-number">01</div>
+        <!-- Icon: Sparkle/Art -->
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M18 3 L19.5 14 L30 15.5 L19.5 17 L18 28 L16.5 17 L6 15.5 L16.5 14 Z"/>
+          <circle cx="28" cy="8" r="2" stroke-width="0.8"/>
+          <circle cx="8" cy="28" r="1.5" stroke-width="0.8"/>
+        </svg>
+        <h3 class="service-name">AI Concept Art</h3>
+        <p class="service-desc">
+          We transform raw briefs into breathtaking visual worlds. Using proprietary AI pipelines,
+          we generate concept art that rivals the output of a full creative studio — in days, not months.
+        </p>
+        <a href="#contact" class="service-link">
+          <span class="service-link-line"></span>
+          Explore
+        </a>
+      </div>
+
+      <!-- Service 2 -->
+      <div class="service-card fade-up fade-up-delay-2">
+        <div class="service-number">02</div>
+        <!-- Icon: Film frame -->
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="3" y="7" width="30" height="22" rx="1"/>
+          <line x1="3" y1="13" x2="33" y2="13"/>
+          <line x1="3" y1="23" x2="33" y2="23"/>
+          <line x1="9" y1="7" x2="9" y2="13"/>
+          <line x1="27" y1="7" x2="27" y2="13"/>
+          <line x1="9" y1="23" x2="9" y2="29"/>
+          <line x1="27" y1="23" x2="27" y2="29"/>
+          <circle cx="18" cy="18" r="3"/>
+        </svg>
+        <h3 class="service-name">Cinematic Motion</h3>
+        <p class="service-desc">
+          From product reveals to full brand films, our AI-driven motion system produces
+          cinematic-quality video with photorealistic lighting, depth, and temporal coherence.
+        </p>
+        <a href="#contact" class="service-link">
+          <span class="service-link-line"></span>
+          Explore
+        </a>
+      </div>
+
+      <!-- Service 3 -->
+      <div class="service-card fade-up fade-up-delay-3">
+        <div class="service-number">03</div>
+        <!-- Icon: Sound wave -->
+        <svg class="service-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
+          <line x1="4" y1="18" x2="6" y2="18"/>
+          <path d="M6 12 Q9 18 12 18 Q15 18 18 10 Q21 2 24 18 Q27 30 30 18"/>
+          <line x1="30" y1="18" x2="32" y2="18"/>
+        </svg>
+        <h3 class="service-name">Sound Design</h3>
+        <p class="service-desc">
+          The invisible art. We compose original soundscapes and score every frame with
+          custom AI-assisted audio — from whispered ambience to full orchestral swells.
+        </p>
+        <a href="#contact" class="service-link">
+          <span class="service-link-line"></span>
+          Explore
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Process ─── -->
+  <section id="process" class="py-32 px-8 md:px-24 max-w-5xl mx-auto">
+    <div class="mb-16 fade-up">
+      <p class="section-label">How We Work</p>
+      <h2 class="section-title">The <em>Process</em></h2>
+    </div>
+
+    <div class="process-step fade-up">
+      <div class="process-num">01</div>
+      <div class="process-body">
+        <h3 class="process-title">Discovery & Vision</h3>
+        <p class="process-desc">
+          We begin with deep listening. Understanding your brand's soul, your audience's desires, and
+          the emotion you want to leave behind. Every frame is intentional.
+        </p>
+      </div>
+    </div>
+
+    <div class="process-step fade-up">
+      <div class="process-num">02</div>
+      <div class="process-body">
+        <h3 class="process-title">AI Direction & Storyboarding</h3>
+        <p class="process-desc">
+          Our creative directors prompt, curate, and iterate with AI tools to build a visual
+          language unique to your project — hundreds of concepts distilled to the perfect few.
+        </p>
+      </div>
+    </div>
+
+    <div class="process-step fade-up">
+      <div class="process-num">03</div>
+      <div class="process-body">
+        <h3 class="process-title">Production & Motion</h3>
+        <p class="process-desc">
+          Static concepts become fluid cinema. Proprietary motion pipelines bring coherence,
+          depth, and drama to every second of footage.
+        </p>
+      </div>
+    </div>
+
+    <div class="process-step fade-up">
+      <div class="process-num">04</div>
+      <div class="process-body">
+        <h3 class="process-title">Sound, Grade & Deliver</h3>
+        <p class="process-desc">
+          Final colour grading with a cinematic LUT library, custom audio composition, and
+          delivery in any format — ready for broadcast, social, or immersive install.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section id="contact" class="cta-section py-40 px-8 text-center">
+    <div style="position:absolute;left:20%;top:0;height:100%;" class="cta-line-deco"></div>
+    <div style="position:absolute;right:20%;top:0;height:100%;" class="cta-line-deco"></div>
+
+    <p class="section-label fade-up">Start Something Extraordinary</p>
+    <h2 class="section-title fade-up fade-up-delay-1" style="margin:1.5rem auto 2rem; max-width:700px;">
+      Ready to turn your<br /><em>vision into cinema?</em>
+    </h2>
+    <p class="fade-up fade-up-delay-2" style="font-size:0.68rem; letter-spacing:0.15em; color:#888; max-width:440px; margin:0 auto 3.5rem; line-height:1.9;">
+      We take on a limited number of projects each quarter to ensure every client
+      receives our full creative attention.
+    </p>
+    <div class="fade-up fade-up-delay-3 flex items-center justify-center gap-6 flex-wrap">
+      <a href="mailto:hello@vortex.studio" class="hero-cta" style="display:inline-block;">
+        Begin Your Project
+      </a>
+      <a href="#work" style="font-size:0.6rem; letter-spacing:0.35em; text-transform:uppercase; color:#888; text-decoration:none; transition:color 0.3s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#888'">
+        View Work First →
+      </a>
+    </div>
+
+    <div class="fade-up fade-up-delay-4 mt-24 flex items-center justify-center gap-8 flex-wrap">
+      <a href="#" class="footer-link">Instagram</a>
+      <span style="color:rgba(201,168,76,0.2)">·</span>
+      <a href="#" class="footer-link">Behance</a>
+      <span style="color:rgba(201,168,76,0.2)">·</span>
+      <a href="#" class="footer-link">Vimeo</a>
+      <span style="color:rgba(201,168,76,0.2)">·</span>
+      <a href="#" class="footer-link">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer class="py-12 px-8 md:px-24">
+    <div class="flex items-center justify-between flex-wrap gap-6">
+      <span class="footer-logo">Vortex</span>
+      <span style="font-size:0.58rem; letter-spacing:0.2em; color:#444; text-transform:uppercase;">
+        © MMXXIV Vortex AI Video Agency. All rights reserved.
+      </span>
+      <div class="flex gap-6">
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── JavaScript ─── -->
+  <script>
+    /* ── Custom cursor ── */
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursor-ring');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top  = mouseY + 'px';
+    });
+
+    (function animateRing() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top  = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    /* ── Navbar scroll ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    /* ── IntersectionObserver fade-up ── */
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // animate once
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -60px 0px'
+    });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    /* ── Portfolio video hover play/pause ── */
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      const video = item.querySelector('video');
+      item.addEventListener('mouseenter', () => { if (video) video.play(); });
+      item.addEventListener('mouseleave', () => { /* keep playing — autoplay is on */ });
+    });
+
+    /* ── Smooth anchor scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
